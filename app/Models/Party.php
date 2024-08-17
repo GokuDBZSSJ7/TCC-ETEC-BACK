@@ -15,4 +15,5 @@ class Party extends Model
         'image_url',
         'leader_id'
     ];
+    
 }

@@ -130,4 +130,18 @@ class UserController extends Controller
             return response()->json(['message' => 'error', $e], 500);
         }
     }
+
+    public function upgradeToCandidate($id)
+    {
+        try {
+            $user = User::find($id);
+            $user->type = 2;
+            $user->role = 'candidato';
+            $user->save();
+
+            return response()->json($user);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'error', $e], 500);
+        }
+    }
 }
