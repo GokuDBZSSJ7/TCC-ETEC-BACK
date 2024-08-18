@@ -40,15 +40,14 @@ class UserController extends Controller
         try {
             $validations = Validator::make($request->all(), [
                 'name' => 'required|string',
-                'email' => 'required|unique',
+                'email' => 'required|email|unique:users,email',  // Especificado a tabela e a coluna para a regra unique
                 'password' => 'required|min:6',
-                
             ]);
-
-            if($validations->fails()) {
-                return response()->json(['message' => 'Erro de validação'], 500);
+        
+            if ($validations->fails()) {
+                return response()->json(['message' => 'Erro de validação', 'errors' => $validations->errors()], 422);  // Alterado para 422 e incluído detalhes dos erros
             }
-
+        
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -58,11 +57,11 @@ class UserController extends Controller
                 'image_url' => $request->image_url,
                 'party_id' => $request->party_id
             ]);
-
+        
             return response()->json($user);
-
+        
         } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
+            return response()->json(['message' => 'Erro interno do servidor', 'error' => $e->getMessage()], 500);  // Formatação correta do erro
         }
     }
 
