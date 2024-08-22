@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Promisse;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PromisseController extends Controller
@@ -39,25 +40,32 @@ class PromisseController extends Controller
             $validations = Validator::make($request->all(), [
                 'title' => 'required',
                 'description' => 'required',
-                'candidate_id' => 'required',
+                'political_id' => 'required',
                 'party_id' => 'required',
-                'expected_time' => 'required'
+                'time' => 'required',
+                'area_id' => 'required',
+                'budget' => 'required'
             ]);
 
             if ($validations->fails()) {
                 return response()->json("Erro de validação");
             }
 
-            $promisse = Promisse::create([
-                'title' => $request->title,
-                'description' => $request->description,
-                'candidate_id' => $request->candidate_id,
-                'party_id' => $request->party_id,
-                'expected_time' => $request->expected_time,
-                'like' => $request->like,
-                'deslike' => $request->deslike,
-                'approvation' => 'Pendente'
-            ]);
+            $imagePath = null;
+            if ($request->has('image_url') && !empty($request->image_url)) {
+                $imageData = $request->image_url;
+                $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $imageData);
+                $imageName = time() . '.jpg';
+                $imagePath = 'images/promisses/' . $imageName;
+                Storage::disk('public')->put($imagePath, base64_decode($base64Image));
+            }
+
+            $data = $request->all();
+            if ($imagePath) {
+                $data['image_url'] = $imagePath;
+            }
+
+            $promisse = Promisse::create($request->all());
 
             return response()->json($promisse);
         } catch (Exception $e) {

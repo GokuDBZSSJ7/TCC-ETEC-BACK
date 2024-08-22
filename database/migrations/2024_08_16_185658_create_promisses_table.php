@@ -15,12 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->foreignId('candidate_id')->constrained('users');
+            $table->foreignId('political_id')->constrained('users');
             $table->foreignId('party_id')->constrained('parties');
-            $table->string('expected_time');
+            $table->string('image_url')->nullable();
+            $table->string('budget');
+            $table->string('time');
             $table->integer('like')->nullable();
             $table->integer('deslike')->nullable();
-            $table->enum('approvation', ['Aprovado', 'Desaprovado', 'Pendente'])->nullable();
+            $table->enum('approvation', ['Aprovado', 'Desaprovado', 'Pendente'])->default('Pendente');
             $table->timestamps();
         });
     }

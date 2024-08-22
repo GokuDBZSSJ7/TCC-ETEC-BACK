@@ -129,12 +129,12 @@ class UserController extends Controller
         }
     }
 
-    public function upgradeToCandidate($id, $title)
+    public function upgradeToCandidate($id)
     {
         try {
             $user = User::find($id);
             $user->type = 2;
-            $user->role = `Candidato - $title`;
+            $user->role = `Político`;
             $user->save();
 
             return response()->json($user);
