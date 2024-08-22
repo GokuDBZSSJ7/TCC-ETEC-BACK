@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['usuario', 'candidato', 'lider']);
-            $table->string('type')->nullable();
+            $table->string('role');
+            $table->integer('type')->nullable();
             $table->foreignId('party_id')->nullable()->constrained('parties')->onDelete('set null');
             $table->string('image_url')->nullable();
             $table->timestamp('email_verified_at')->nullable();

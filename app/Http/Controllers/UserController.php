@@ -40,26 +40,25 @@ class UserController extends Controller
         try {
             $validations = Validator::make($request->all(), [
                 'name' => 'required|string',
-                'email' => 'required|email|unique:users,email',  // Especificado a tabela e a coluna para a regra unique
+                'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:6',
             ]);
-        
+
             if ($validations->fails()) {
                 return response()->json(['message' => 'Erro de validação', 'errors' => $validations->errors()], 422);  // Alterado para 422 e incluído detalhes dos erros
             }
-        
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
-                'role' => 'usuario',
-                'type' => 'user',
+                'role' => 'Usuario',
+                'type' => 1,
                 'image_url' => $request->image_url,
                 'party_id' => $request->party_id
             ]);
-        
+
             return response()->json($user);
-        
         } catch (Exception $e) {
             return response()->json(['message' => 'Erro interno do servidor', 'error' => $e->getMessage()], 500);  // Formatação correta do erro
         }
@@ -130,15 +129,37 @@ class UserController extends Controller
         }
     }
 
-    public function upgradeToCandidate($id)
+    public function upgradeToCandidate($id, $title)
     {
         try {
             $user = User::find($id);
             $user->type = 2;
-            $user->role = 'candidato';
+            $user->role = `Candidato - $title`;
             $user->save();
 
             return response()->json($user);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'error', $e], 500);
+        }
+    }
+
+    public function upgradeToLeader($id, $partyName)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->type = 3;
+            $user->role = "Líder do partido $partyName";
+        } catch (Exception $e) {
+            return response()->json(['message' => 'error', $e], 500);
+        }
+    }
+
+    public function returnToUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->type = 1;
+            $user->role = 'Usuario';
         } catch (Exception $e) {
             return response()->json(['message' => 'error', $e], 500);
         }

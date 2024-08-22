@@ -17,6 +17,10 @@ return new class extends Migration
             $table->text('description');
             $table->foreignId('candidate_id')->constrained('users');
             $table->foreignId('party_id')->constrained('parties');
+            $table->string('expected_time');
+            $table->integer('like')->nullable();
+            $table->integer('deslike')->nullable();
+            $table->enum('approvation', ['Aprovado', 'Desaprovado', 'Pendente'])->nullable();
             $table->timestamps();
         });
     }
