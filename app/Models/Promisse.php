@@ -12,9 +12,14 @@ class Promisse extends Model
     protected $fillable = [
         'title',
         'description',
-        'candidate_id',
+        'political_id',
         'party_id',
-        'expected_time',
+        'image_url',
+        'budget',
+        'time',
+        'like',
+        'deslike',
+        'approvation'
     ];
 
     protected $with = [
