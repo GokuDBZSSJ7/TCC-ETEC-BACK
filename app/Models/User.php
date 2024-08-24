@@ -59,7 +59,7 @@ class User extends Authenticatable
             }
             return asset('storage/' . $value);
         } else {
-            return asset('images/img-padrao.jpg');
+            return asset('null');
         }
     }
 }
