@@ -48,7 +48,7 @@ class PromisseController extends Controller
             ]);
 
             if ($validations->fails()) {
-                return response()->json("Erro de validação");
+                return response()->json($validations->errors(), 422);
             }
 
             $imagePath = null;

@@ -25,7 +25,8 @@ class User extends Authenticatable
         'type',
         'party_id',
         'image_url',
-        'email_verified_at'
+        'city_id',
+        'party_id'
     ];
 
     /**
@@ -50,6 +51,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // public function states()
+    // {
+    //     $this->belongsTo(Stat)
+    // }
 
     public function getImageUrlAttribute($value): string
     {

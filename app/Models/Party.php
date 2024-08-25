@@ -13,7 +13,9 @@ class Party extends Model
         'name',
         'acronym',
         'image_url',
-        'leader_id'
+        'leader_id',
+        'city_id',
+        'party_id'
     ];
 
     public function users()

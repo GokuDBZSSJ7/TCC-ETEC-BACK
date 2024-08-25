@@ -37,6 +37,11 @@ class Promisse extends Model
         return $this->belongsTo(Party::class, 'party_id');
     }
 
+    public function areas()
+    {
+        return $this->belongsTo(Area::class, 'area_id');
+    }
+
     public function getImageUrlAttribute($value): string
     {
         if ($value) {
