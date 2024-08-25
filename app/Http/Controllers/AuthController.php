@@ -10,23 +10,32 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
+    $user = \App\Models\User::where('email', $credentials['email'])->first();
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user
-            ]);
-        }
-
-        return response()->json(['message' => 'Credenciais inválidas'], 401);
+    if (!$user) {
+        return response()->json(['message' => 'Email não encontrado'], 404);
     }
+
+    if (!Hash::check($credentials['password'], $user->password)) {
+        return response()->json(['message' => 'Senha incorreta'], 401);
+    }
+
+    if (Auth::attempt($credentials)) {
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ]);
+    }
+
+    return response()->json(['message' => 'Erro de autenticação desconhecido'], 401);
+}
+
 
     public function me()
     {
