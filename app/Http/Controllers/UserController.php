@@ -164,4 +164,9 @@ class UserController extends Controller
             return response()->json(['message' => 'error', $e], 500);
         }
     }
+
+    public function getPoliticians() {
+        $politicians = User::where('type', 2)->get();
+        return response()->json($politicians);
+    }
 }
