@@ -52,10 +52,10 @@ class User extends Authenticatable
         ];
     }
 
-    // public function states()
-    // {
-    //     $this->belongsTo(Stat)
-    // }
+    public function states()
+    {
+        $this->belongsTo(State::class);
+    }
 
     public function getImageUrlAttribute($value): string
     {
