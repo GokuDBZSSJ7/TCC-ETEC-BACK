@@ -30,7 +30,8 @@ class User extends Authenticatable
 
     protected $with = [
         'state',
-        'party'
+        'party',
+        'city'
     ];
 
     /**
@@ -76,5 +77,10 @@ class User extends Authenticatable
     public function party()
     {
         return $this->belongsTo(Party::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 }

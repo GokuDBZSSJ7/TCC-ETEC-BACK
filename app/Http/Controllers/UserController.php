@@ -171,7 +171,6 @@ class UserController extends Controller
     public function getPoliticians()
     {
         $politicians = User::where('type', 2)->get();
-        $politicians->load('party');
 
         return response()->json($politicians);
     }
