@@ -139,7 +139,6 @@ class UserController extends Controller
             $user->role = `Político`;
             $user->save();
 
-            $user->load('parties');
 
             return response()->json($user);
         } catch (Exception $e) {
@@ -172,6 +171,8 @@ class UserController extends Controller
     public function getPoliticians()
     {
         $politicians = User::where('type', 2)->get();
+        $politicians->load('party');
+
         return response()->json($politicians);
     }
 }

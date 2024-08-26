@@ -29,6 +29,11 @@ class User extends Authenticatable
         'party_id'
     ];
 
+    protected $with = [
+        'state',
+        'party'
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -52,7 +57,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function states()
+    public function state()
     {
         $this->belongsTo(State::class);
     }
@@ -69,7 +74,7 @@ class User extends Authenticatable
         }
     }
 
-    public function parties()
+    public function party()
     {
         $this->belongsTo(Party::class);
     }
