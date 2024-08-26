@@ -68,4 +68,9 @@ class User extends Authenticatable
             return asset('null');
         }
     }
+
+    public function parties()
+    {
+        $this->belongsTo(Party::class);
+    }
 }
