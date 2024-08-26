@@ -26,7 +26,6 @@ class User extends Authenticatable
         'party_id',
         'image_url',
         'city_id',
-        'party_id'
     ];
 
     protected $with = [
@@ -59,7 +58,7 @@ class User extends Authenticatable
 
     public function state()
     {
-        $this->belongsTo(State::class);
+        return $this->belongsTo(State::class);
     }
 
     public function getImageUrlAttribute($value): string
@@ -76,6 +75,6 @@ class User extends Authenticatable
 
     public function party()
     {
-        $this->belongsTo(Party::class);
+        return $this->belongsTo(Party::class);
     }
 }
