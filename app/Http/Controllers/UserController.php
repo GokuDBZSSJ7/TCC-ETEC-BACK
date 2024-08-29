@@ -174,4 +174,27 @@ class UserController extends Controller
 
         return response()->json($politicians);
     }
+
+    public function filterPoliticians(Request $request)
+    {
+        $users = User::with(['state', 'party', 'city'])->where('type', 2);
+
+        if ($request->has('name') && $request->name !== null) {
+            $users->where('name', $request->name);
+        }
+
+        if ($request->has('state_id') && $request->state_id !== null) {
+            $users->where('state_id', $request->state_id);
+        }
+
+        if ($request->has('city_id') && $request->city_id !== null) {
+            $users->where('city_id', $request->city_id);
+        }
+
+        if ($request->has('party_id') && $request->party_id !== null) {
+            $users->where('party_id', $request->party_id);
+        }
+
+        return $users->get();
+    }
 }
