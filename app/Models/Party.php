@@ -15,12 +15,21 @@ class Party extends Model
         'image_url',
         'leader_id',
         'city_id',
-        'party_id'
     ];
 
-    public function users()
+    protected $with = [
+        'user',
+        'city'
+    ];
+
+    public function user()
     {
         return $this->belongsTo(User::class, 'leader_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     public function getImageUrlAttribute($value): string
