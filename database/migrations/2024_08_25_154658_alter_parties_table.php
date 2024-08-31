@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('parties', function (Blueprint $table) {
             $table->foreignId('city_id')->nullable()->constrained('cities')->onDelete('cascade');
-            $table->foreignId('state_id')->nullable()->constrained('states')->onDelete('cascade');
         });
     }
 
@@ -24,7 +23,6 @@ return new class extends Migration
     {
         Schema::table('parties', function (Blueprint $table) {
             $table->dropForeign(['city_id']);
-            $table->dropForeign(['state_id']);
         });
     }
 };

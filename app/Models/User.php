@@ -29,7 +29,6 @@ class User extends Authenticatable
     ];
 
     protected $with = [
-        'state',
         'party',
         'city'
     ];
@@ -55,11 +54,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function state()
-    {
-        return $this->belongsTo(State::class);
     }
 
     public function getImageUrlAttribute($value): string

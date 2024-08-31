@@ -57,7 +57,6 @@ class UserController extends Controller
                 'image_url' => $request->image_url,
                 'party_id' => $request->party_id,
                 'city_id' => $request->city_id,
-                'state_id' => $request->state_id,
             ]);
 
             return response()->json($user);
