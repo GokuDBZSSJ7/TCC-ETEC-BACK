@@ -12,6 +12,7 @@ Route::post('register', [UserController::class, 'store']);
 
 
 Route::get('getPoliticians', [UserController::class, 'getPoliticians']);
+Route::get('getUsers', [UserController::class, 'getUsers']);
 Route::get('me', [AuthController::class, 'me']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::post('refresh', [AuthController::class, 'refresh']);
@@ -28,3 +29,5 @@ Route::resource('parties', PartyController::class);
 Route::post('filterPoliticians', [UserController::class, 'filterPoliticians']);
 
 Route::post('upgradeToCandidate', [UserController::class, 'upgradeToCandidate']);
+
+Route::put('updateUser/{id}', [UserController::class, 'update']);

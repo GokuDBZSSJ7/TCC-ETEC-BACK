@@ -134,7 +134,7 @@ return [
     |
     */
     
-    'memory_limit' => env('MEMORY_LIMIT', '1G'),
+    'memory_limit' => env('MEMORY_LIMIT', '10G'),
 
 ];
 
