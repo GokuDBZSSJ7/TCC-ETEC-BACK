@@ -26,3 +26,5 @@ Route::get('getCitieByStateId/{id}', [CityController::class, 'getCitieByStateId'
 Route::resource('parties', PartyController::class);
 
 Route::post('filterPoliticians', [UserController::class, 'filterPoliticians']);
+
+Route::post('upgradeToCandidate', [UserController::class, 'upgradeToCandidate']);

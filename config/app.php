@@ -123,4 +123,19 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | PHP Memory Limit
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the memory limit for PHP in your application.
+    | Set this in your ".env" file as "MEMORY_LIMIT".
+    | Example: MEMORY_LIMIT=512M
+    |
+    */
+    
+    'memory_limit' => env('MEMORY_LIMIT', '1G'),
+
 ];
+
+ini_set('memory_limit', config('app.memory_limit'));
