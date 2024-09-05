@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
@@ -18,6 +19,7 @@ Route::post('logout', [AuthController::class, 'logout']);
 Route::post('refresh', [AuthController::class, 'refresh']);
 
 Route::resource('users', UserController::class);
+Route::resource('areas', AreaController::class);
 Route::middleware('auth:sanctum')->group(function () {});
 
 Route::resource('states', StateController::class);
