@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\PartyController;
+use App\Http\Controllers\PromisseController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
 
@@ -33,3 +34,5 @@ Route::post('filterPoliticians', [UserController::class, 'filterPoliticians']);
 Route::post('upgradeToCandidate', [UserController::class, 'upgradeToCandidate']);
 
 Route::put('updateUser/{id}', [UserController::class, 'update']);
+
+Route::resource('proposals', PromisseController::class);

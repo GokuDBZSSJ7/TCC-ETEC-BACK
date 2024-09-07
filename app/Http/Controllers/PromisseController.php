@@ -51,14 +51,7 @@ class PromisseController extends Controller
                 return response()->json($validations->errors(), 422);
             }
 
-            $imagePath = null;
-            if ($request->has('image_url') && !empty($request->image_url)) {
-                $imageData = $request->image_url;
-                $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $imageData);
-                $imageName = time() . '.jpg';
-                $imagePath = 'images/promisses/' . $imageName;
-                Storage::disk('public')->put($imagePath, base64_decode($base64Image));
-            }
+            $imagePath = $this->handleImageUpload($request->image_url);
 
             $data = $request->all();
             if ($imagePath) {
@@ -146,5 +139,18 @@ class PromisseController extends Controller
         } catch (Exception $e) {
             return response()->json(['message' => 'error', $e], 500);
         }
+    }
+
+    protected function handleImageUpload($imageData)
+    {
+        if ($imageData && !empty($imageData)) {
+            $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $imageData);
+            $imageName = time() . '.jpg';
+            $imagePath = 'images/promisses/' . $imageName;
+            Storage::disk('public')->put($imagePath, base64_decode($base64Image));
+
+            return $imagePath;
+        }
+        return null;
     }
 }

@@ -19,17 +19,19 @@ class Promisse extends Model
         'time',
         'like',
         'deslike',
-        'approvation'
+        'approvation',
+        'area_id'
     ];
 
     protected $with = [
         'users',
-        'parties'
+        'parties',
+        'areas'
     ];
 
     public function users()
     {
-        return $this->belongsTo(User::class, 'candidate_id');
+        return $this->belongsTo(User::class, 'political_id');
     }
 
     public function parties()
@@ -50,7 +52,7 @@ class Promisse extends Model
             }
             return asset('storage/' . $value);
         } else {
-            return asset('images/img-padrao.jpg');
+            return asset('null');
         }
     }
 }
