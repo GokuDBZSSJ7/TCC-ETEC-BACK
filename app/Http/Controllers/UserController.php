@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Promisse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -200,5 +201,11 @@ class UserController extends Controller
             return $imagePath;
         }
         return null;
+    }
+
+    public function showMyPromisses($id) {
+        $promisses = Promisse::all()->where('political_id', $id);
+
+        return $promisses;
     }
 }

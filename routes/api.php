@@ -36,3 +36,5 @@ Route::post('upgradeToCandidate', [UserController::class, 'upgradeToCandidate'])
 Route::put('updateUser/{id}', [UserController::class, 'update']);
 
 Route::resource('proposals', PromisseController::class);
+
+Route::get('showMyPromisses/{id}', [UserController::class, 'showMyPromisses']);

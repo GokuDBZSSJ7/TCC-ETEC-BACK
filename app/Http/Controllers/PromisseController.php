@@ -58,7 +58,7 @@ class PromisseController extends Controller
                 $data['image_url'] = $imagePath;
             }
 
-            $promisse = Promisse::create($request->all());
+            $promisse = Promisse::create($data);
 
             return response()->json($promisse);
         } catch (Exception $e) {

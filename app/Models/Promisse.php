@@ -47,12 +47,9 @@ class Promisse extends Model
     public function getImageUrlAttribute($value): string
     {
         if ($value) {
-            if (str_contains($value, 'storage')) {
-                return asset($value);
-            }
             return asset('storage/' . $value);
-        } else {
-            return asset('null');
         }
+        return asset('null');
     }
+
 }
