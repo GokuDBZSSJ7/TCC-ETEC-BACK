@@ -53,6 +53,7 @@ class UserController extends Controller
     {
         return $this->handleRequest(function() use ($id) {
             $user = User::find($id);
+            $user->load('party');
             return response()->json($user);
         });
     }
@@ -146,9 +147,9 @@ class UserController extends Controller
     public function filterPoliticians(Request $request)
     {
         return $this->handleRequest(function() use ($request) {
-            $users = User::with(['state', 'party', 'city'])->where('type', 2);
+            $users = User::with(['party', 'city'])->where('type', 2);
 
-            $filters = ['name', 'state_id', 'city_id', 'party_id'];
+            $filters = ['name', 'city_id', 'party_id'];
             foreach ($filters as $filter) {
                 if ($request->has($filter) && $request->$filter !== null) {
                     $users->where($filter, $request->$filter);
