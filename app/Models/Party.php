@@ -18,7 +18,7 @@ class Party extends Model
     ];
 
     protected $with = [
-        'city'
+        'city',
     ];
 
     public function user()

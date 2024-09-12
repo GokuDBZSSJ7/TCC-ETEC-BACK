@@ -18,6 +18,7 @@ class PartyController extends Controller
     {
         try {
             $parties = Party::all();
+            $parties->load('user');
             return response()->json($parties);
         } catch (Exception $e) {
             return response()->json(['message' => 'error', $e], 500);
