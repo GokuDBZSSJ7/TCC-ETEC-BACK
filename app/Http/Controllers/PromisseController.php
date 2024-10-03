@@ -44,7 +44,8 @@ class PromisseController extends Controller
                 'party_id' => 'required',
                 'time' => 'required',
                 'area_id' => 'required',
-                'budget' => 'required'
+                'budget' => 'required',
+                'status' => 'required'
             ]);
 
             if ($validations->fails()) {
@@ -152,5 +153,12 @@ class PromisseController extends Controller
             return $imagePath;
         }
         return null;
+    }
+
+    public function getFinishedProposals($id) {
+        $proposals = Promisse::findOrFail($id);
+        $finishes = $proposals->where('status', 'Em Andamento')->get();
+
+        return $finishes;
     }
 }

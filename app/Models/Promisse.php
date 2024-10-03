@@ -20,7 +20,8 @@ class Promisse extends Model
         'like',
         'deslike',
         'approvation',
-        'area_id'
+        'area_id',
+        'status'
     ];
 
     protected $with = [
