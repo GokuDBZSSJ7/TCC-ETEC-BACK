@@ -39,3 +39,4 @@ Route::resource('proposals', PromisseController::class);
 
 Route::get('showMyPromisses/{id}', [UserController::class, 'showMyPromisses']);
 Route::get('getFinishedProposals/{id}', [PromisseController::class, 'getFinishedProposals']);
+Route::get('getWorkingProposals/{id}', [PromisseController::class, 'getWorkingProposals']);

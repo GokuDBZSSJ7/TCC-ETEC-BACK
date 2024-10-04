@@ -156,9 +156,20 @@ class PromisseController extends Controller
     }
 
     public function getFinishedProposals($id) {
-        $proposals = Promisse::findOrFail($id);
-        $finishes = $proposals->where('status', 'Em Andamento')->get();
-
+        $proposals = Promisse::where('political_id', $id)->get();
+        $finishes = $proposals->filter(function ($proposal) {
+            return $proposal->status == 'Finalizada';
+        });
+    
         return $finishes;
     }
+    public function getWorkingProposals($id) {
+        $proposals = Promisse::where('political_id', $id)->get();
+        $finishes = $proposals->filter(function ($proposal) {
+            return $proposal->status == 'Em Andamento';
+        });
+    
+        return $finishes;
+    }
+    
 }
