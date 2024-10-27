@@ -30,6 +30,8 @@ class Promisse extends Model
         'areas'
     ];
 
+    protected $appends = ['is_delayed'];
+
     public function users()
     {
         return $this->belongsTo(User::class, 'political_id');
@@ -53,4 +55,17 @@ class Promisse extends Model
         return asset('null');
     }
 
+    public function getIsDelayedAttribute(): string
+    {
+        $deliveryDate = \Carbon\Carbon::parse($this->time);
+        $today = \Carbon\Carbon::today();
+
+        if ($this->status === 'Finalizada' && $today->lessThan($deliveryDate)) {
+            return 'Adiantada';
+        } elseif ($today->greaterThan($deliveryDate) && $this->status === 'Em Andamento') {
+            return 'Atrasado';
+        } else {
+            return 'No Prazo';
+        }
+    }
 }
