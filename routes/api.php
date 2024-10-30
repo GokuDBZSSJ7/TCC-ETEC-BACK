@@ -4,6 +4,7 @@ use App\Http\Controllers\AreaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\PartyController;
 use App\Http\Controllers\PromisseController;
 use App\Http\Controllers\StateController;
@@ -40,3 +41,5 @@ Route::resource('proposals', PromisseController::class);
 Route::get('showMyPromisses/{id}', [UserController::class, 'showMyPromisses']);
 Route::get('getFinishedProposals/{id}', [PromisseController::class, 'getFinishedProposals']);
 Route::get('getWorkingProposals/{id}', [PromisseController::class, 'getWorkingProposals']);
+
+Route::post('password/email', [EmailController::class, 'sendResetLinkEmail']);
