@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResetPasswordNotification extends Notification
+class ResetPasswordNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -25,7 +25,8 @@ class ResetPasswordNotification extends Notification
 
     public function toMail($notifiable)
     {
-        $url = url(config('app.frontend_url') . '/reset-password/' . $this->token);
+        $frontendUrl = config('app.frontend_url');
+        $url = url($frontendUrl . '/reset-password/' . $this->token);
 
         return (new MailMessage)
             ->subject('Redefinição de Senha')

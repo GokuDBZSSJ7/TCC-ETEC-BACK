@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,9 +17,9 @@ class CommentController extends Controller
     {
         try {
             $comments = Comment::where('proposal_id', $proposalId)->get();
-            return $comments;
+            return response()->json($comments, 200);
         } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
+            return response()->json(['message' => 'Error retrieving comments', 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -36,20 +37,20 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         try {
-            $validate = Validator::make($request->all(), [
-                'user_id' => 'required',
-                'proposal_id' => 'required'
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:users,id',
+                'proposal_id' => 'required|exists:proposals,id',
             ]);
 
-            if ($validate->fails()) {
-                return response()->json($validate->errors(), 422);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
             }
 
             $comment = Comment::create($request->all());
 
-            return $comment;
+            return response()->json(['message' => 'Comment created successfully', 'comment' => $comment], 201);
         } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
+            return response()->json(['message' => 'Error creating comment', 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -61,9 +62,11 @@ class CommentController extends Controller
         try {
             $comment = Comment::findOrFail($id);
 
-            return $comment;
+            return response()->json($comment, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Comment not found'], 404);
         } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
+            return response()->json(['message' => 'Error retrieving comment', 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -81,12 +84,23 @@ class CommentController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:users,id',
+                'proposal_id' => 'required|exists:proposals,id',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
             $comment = Comment::findOrFail($id);
             $comment->update($request->all());
 
-            return $comment;
+            return response()->json(['message' => 'Comment updated successfully', 'comment' => $comment], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Comment not found'], 404);
         } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
+            return response()->json(['message' => 'Error updating comment', 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -98,9 +112,12 @@ class CommentController extends Controller
         try {
             $comment = Comment::findOrFail($id);
             $comment->delete();
-            return response()->json("Deletado com sucesso!");;
+
+            return response()->json(['message' => 'Deletado com sucesso!'], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Comment not found'], 404);
         } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
+            return response()->json(['message' => 'Error deleting comment', 'error' => $e->getMessage()], 500);
         }
     }
 }
