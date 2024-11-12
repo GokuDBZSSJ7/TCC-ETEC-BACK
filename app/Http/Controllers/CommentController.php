@@ -16,7 +16,7 @@ class CommentController extends Controller
     public function index($proposalId)
     {
         try {
-            $comments = Comment::where('proposal_id', $proposalId)->get();
+            $comments = Comment::where('promisse_id', $proposalId)->get();
             return response()->json($comments, 200);
         } catch (Exception $e) {
             return response()->json(['message' => 'Error retrieving comments', 'error' => $e->getMessage()], 500);
@@ -39,7 +39,7 @@ class CommentController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|exists:users,id',
-                'proposal_id' => 'required|exists:proposals,id',
+                'promisse_id' => 'required|exists:promisses,id',
             ]);
 
             if ($validator->fails()) {
@@ -53,6 +53,7 @@ class CommentController extends Controller
             return response()->json(['message' => 'Error creating comment', 'error' => $e->getMessage()], 500);
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -86,7 +87,7 @@ class CommentController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|exists:users,id',
-                'proposal_id' => 'required|exists:proposals,id',
+                'promisse_id' => 'required|exists:promisses,id',
             ]);
 
             if ($validator->fails()) {
@@ -118,6 +119,17 @@ class CommentController extends Controller
             return response()->json(['message' => 'Comment not found'], 404);
         } catch (Exception $e) {
             return response()->json(['message' => 'Error deleting comment', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getCommentsByPromisseId($id)
+    {
+        try {
+            $comments = Comment::where('promisse_id', $id)->get();
+
+            return response()->json(['comments' => $comments], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error fetching comments', 'error' => $e->getMessage()], 500);
         }
     }
 }

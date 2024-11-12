@@ -3,6 +3,7 @@
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\PartyController;
 use App\Http\Controllers\PromisseController;
@@ -36,6 +37,9 @@ Route::resource('parties', PartyController::class);
 Route::resource('proposals', PromisseController::class);
 Route::get('getFinishedProposals/{id}', [PromisseController::class, 'getFinishedProposals']);
 Route::get('getWorkingProposals/{id}', [PromisseController::class, 'getWorkingProposals']);
+
+Route::resource('comments', CommentController::class);
+Route::get('getCommentsByPromisseId/{id}', [CommentController::class, 'getCommentsByPromisseId']);
 
 Route::post('password/email', [EmailController::class, 'sendResetLinkEmail']);
 

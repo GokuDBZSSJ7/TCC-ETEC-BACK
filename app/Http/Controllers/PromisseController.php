@@ -163,6 +163,7 @@ class PromisseController extends Controller
     
         return $finishes;
     }
+    
     public function getWorkingProposals($id) {
         $proposals = Promisse::where('political_id', $id)->get();
         $finishes = $proposals->filter(function ($proposal) {
