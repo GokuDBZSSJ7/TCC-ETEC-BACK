@@ -43,5 +43,7 @@ Route::get('getCommentsByPromisseId/{id}', [CommentController::class, 'getCommen
 
 Route::post('password/email', [EmailController::class, 'sendResetLinkEmail']);
 
+Route::post('likeToggle', [PromisseController::class, 'toggle']);
+
 Route::middleware('auth:sanctum')->group(function () {
 });

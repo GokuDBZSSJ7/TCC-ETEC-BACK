@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Promisse;
 use Exception;
 use Illuminate\Http\Request;
@@ -171,6 +172,13 @@ class PromisseController extends Controller
         });
     
         return $finishes;
+    }
+
+    public function toggle(Request $request)
+    {
+        Like::toggleLike($request->user_id, $request->promisse_id);
+        
+        return response()->json(['message' => 'Ação realizada com sucesso']);
     }
     
 }
