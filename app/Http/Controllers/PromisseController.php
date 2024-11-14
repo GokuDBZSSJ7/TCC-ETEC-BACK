@@ -185,5 +185,16 @@ class PromisseController extends Controller
         $like = Like::where('promisse_id', $id)->get();
         return response()->json($like);
     }
+
+    public function getLikesByPromisse($id) {
+        $likes = Like::where('promisse_id', $id)->get();
+        
+        $groupedLikes = $likes->groupBy('type')->map(function($item, $key) {
+            return $item->count();
+        });
+    
+        return response()->json($groupedLikes);
+    }
+    
     
 }

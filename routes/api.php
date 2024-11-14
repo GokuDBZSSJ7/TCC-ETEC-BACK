@@ -47,5 +47,7 @@ Route::post('likeToggle', [PromisseController::class, 'toggle']);
 
 Route::get('getLikeByPromisse/{id}', [PromisseController::class, 'getLikeByPromisse']);
 
+Route::get('getLikesByPromisse/{id}', [PromisseController::class, 'getLikesByPromisse']);
+
 Route::middleware('auth:sanctum')->group(function () {
 });
