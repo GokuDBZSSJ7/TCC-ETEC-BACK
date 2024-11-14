@@ -9,25 +9,25 @@ class Like extends Model
 {
     protected $fillable = ['user_id', 'promisse_id', 'type'];
 
-    public static function toggleLike($userId, $promisseId)
+    public static function toggleLike($userId, $promisseId, $type)
     {
         $like = self::where('user_id', $userId)
-                    ->where('promisse_id', $promisseId)
-                    ->first();
+            ->where('promisse_id', $promisseId)
+            ->first();
 
         if ($like) {
-            if ($like->type == 'like') {
+            if ($like->type === $type) {
                 $like->delete();
-            } elseif ($like->type == 'dislike') {
+                return;
+            } else {
                 $like->delete();
             }
         }
 
-        $newType = $like && $like->type == 'like' ? 'dislike' : 'like';
         self::create([
             'user_id' => $userId,
             'promisse_id' => $promisseId,
-            'type' => $newType,
+            'type' => $type,
         ]);
     }
 }

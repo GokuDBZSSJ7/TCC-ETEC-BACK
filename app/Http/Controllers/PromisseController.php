@@ -176,9 +176,14 @@ class PromisseController extends Controller
 
     public function toggle(Request $request)
     {
-        Like::toggleLike($request->user_id, $request->promisse_id);
+        Like::toggleLike($request->user_id, $request->promisse_id, $request->type);
         
         return response()->json(['message' => 'Ação realizada com sucesso']);
+    }
+
+    public function getLikeByPromisse($id) {
+        $like = Like::where('promisse_id', $id)->get();
+        return response()->json($like);
     }
     
 }

@@ -45,5 +45,7 @@ Route::post('password/email', [EmailController::class, 'sendResetLinkEmail']);
 
 Route::post('likeToggle', [PromisseController::class, 'toggle']);
 
+Route::get('getLikeByPromisse/{id}', [PromisseController::class, 'getLikeByPromisse']);
+
 Route::middleware('auth:sanctum')->group(function () {
 });
