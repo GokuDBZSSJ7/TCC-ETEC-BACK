@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Promisse;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -16,20 +16,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        try {
+        return $this->handleRequest(function() {
             $users = User::all();
+            $users->load('party');
             return response()->json($users);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
-        }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        });
     }
 
     /**
@@ -37,16 +28,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validations = Validator::make($request->all(), [
-                'name' => 'required|string',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|min:6',
-            ]);
-
-            if ($validations->fails()) {
-                return response()->json(['message' => 'Erro de validação', 'errors' => $validations->errors()], 422);  // Alterado para 422 e incluído detalhes dos erros
-            }
+        return $this->handleRequest(function() use ($request) {
+            $this->validateUser($request);
 
             $user = User::create([
                 'name' => $request->name,
@@ -55,13 +38,12 @@ class UserController extends Controller
                 'role' => 'Usuario',
                 'type' => 1,
                 'image_url' => $request->image_url,
-                'party_id' => $request->party_id
+                'party_id' => $request->party_id,
+                'city_id' => $request->city_id,
             ]);
 
             return response()->json($user);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'Erro interno do servidor', 'error' => $e->getMessage()], 500);  // Formatação correta do erro
-        }
+        });
     }
 
     /**
@@ -69,20 +51,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        try {
+        return $this->handleRequest(function() use ($id) {
             $user = User::find($id);
+            $user->load('party');
             return response()->json($user);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
-        }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        });
     }
 
     /**
@@ -90,16 +63,9 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
+        return $this->handleRequest(function() use ($request, $id) {
             $user = User::find($id);
-            $imagePath = null;
-            if ($request->has('image_url') && !empty($request->image_url)) {
-                $imageData = $request->image_url;
-                $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $imageData);
-                $imageName = time() . '.jpg';
-                $imagePath = 'images/users/' . $imageName;
-                Storage::disk('public')->put($imagePath, base64_decode($base64Image));
-            }
+            $imagePath = $this->handleImageUpload($request->image_url);
 
             $data = $request->all();
             if ($imagePath) {
@@ -107,11 +73,8 @@ class UserController extends Controller
             }
 
             $user->update($data);
-
             return response()->json($user);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
-        }
+        });
     }
 
     /**
@@ -119,54 +82,131 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        try {
+        return $this->handleRequest(function() use ($id) {
             $user = User::find($id);
             $user->delete();
 
             return response()->json(['message' => 'Usuario deletado com sucesso!']);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
-        }
+        });
     }
 
-    public function upgradeToCandidate($id)
+    public function upgradeToCandidate(Request $request)
     {
-        try {
-            $user = User::find($id);
+        return $this->handleRequest(function() use ($request) {
+            $user = User::find($request->id);
             $user->type = 2;
-            $user->role = `Político`;
+            $user->role = $request->role;
+            $user->party_id = $request->party_id;
             $user->save();
 
             return response()->json($user);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
-        }
+        });
     }
 
     public function upgradeToLeader($id, $partyName)
     {
-        try {
+        return $this->handleRequest(function() use ($id, $partyName) {
             $user = User::findOrFail($id);
             $user->type = 3;
             $user->role = "Líder do partido $partyName";
-        } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
-        }
+            $user->save();
+
+            return response()->json($user);
+        });
     }
 
     public function returnToUser($id)
     {
-        try {
+        return $this->handleRequest(function() use ($id) {
             $user = User::findOrFail($id);
             $user->type = 1;
             $user->role = 'Usuario';
-        } catch (Exception $e) {
-            return response()->json(['message' => 'error', $e], 500);
+            $user->save();
+
+            return response()->json($user);
+        });
+    }
+
+    public function getPoliticians()
+    {
+        return $this->handleRequest(function() {
+            $politicians = User::where('type', 2)->get();
+            $politicians->load('party');
+            return response()->json($politicians);
+        });
+    }
+
+    public function getUsers()
+    {
+        return $this->handleRequest(function() {
+            $users = User::where('type', 1)->get();
+            return response()->json($users);
+        });
+    }
+
+    public function filterPoliticians(Request $request)
+    {
+        return $this->handleRequest(function() use ($request) {
+            $users = User::with(['party', 'city'])->where('type', 2);
+
+            $filters = ['name', 'city_id', 'party_id'];
+            foreach ($filters as $filter) {
+                if ($request->has($filter) && $request->$filter !== null) {
+                    $users->where($filter, $request->$filter);
+                }
+            }
+
+            return $users->get();
+        });
+    }
+
+    /**
+     * Handle common request processing and error handling.
+     */
+    protected function handleRequest(callable $callback)
+    {
+        try {
+            return $callback();
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'error', 'error' => $e->getMessage()], 500);
         }
     }
 
-    public function getPoliticians() {
-        $politicians = User::where('type', 2)->get();
-        return response()->json($politicians);
+    /**
+     * Validate user data.
+     */
+    protected function validateUser(Request $request)
+    {
+        $validations = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validations->fails()) {
+            throw new \Illuminate\Validation\ValidationException($validations);
+        }
+    }
+
+    /**
+     * Handle image upload.
+     */
+    protected function handleImageUpload($imageData)
+    {
+        if ($imageData && !empty($imageData)) {
+            $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $imageData);
+            $imageName = time() . '.jpg';
+            $imagePath = 'images/users/' . $imageName;
+            Storage::disk('public')->put($imagePath, base64_decode($base64Image));
+
+            return $imagePath;
+        }
+        return null;
+    }
+
+    public function showMyPromisses($id) {
+        $promisses = Promisse::all()->where('political_id', $id);
+
+        return $promisses;
     }
 }

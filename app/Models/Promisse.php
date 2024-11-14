@@ -19,17 +19,22 @@ class Promisse extends Model
         'time',
         'like',
         'deslike',
-        'approvation'
+        'approvation',
+        'area_id',
+        'status'
     ];
 
     protected $with = [
         'users',
-        'parties'
+        'parties',
+        'areas'
     ];
+
+    protected $appends = ['is_delayed'];
 
     public function users()
     {
-        return $this->belongsTo(User::class, 'candidate_id');
+        return $this->belongsTo(User::class, 'political_id');
     }
 
     public function parties()
@@ -37,15 +42,30 @@ class Promisse extends Model
         return $this->belongsTo(Party::class, 'party_id');
     }
 
+    public function areas()
+    {
+        return $this->belongsTo(Area::class, 'area_id');
+    }
+
     public function getImageUrlAttribute($value): string
     {
         if ($value) {
-            if (str_contains($value, 'storage')) {
-                return asset($value);
-            }
             return asset('storage/' . $value);
+        }
+        return asset('null');
+    }
+
+    public function getIsDelayedAttribute(): string
+    {
+        $deliveryDate = \Carbon\Carbon::parse($this->time);
+        $today = \Carbon\Carbon::today();
+
+        if ($this->status === 'Finalizada' && $today->lessThan($deliveryDate)) {
+            return 'Adiantada';
+        } elseif ($today->greaterThan($deliveryDate) && $this->status === 'Em Andamento') {
+            return 'Atrasado';
         } else {
-            return asset('images/img-padrao.jpg');
+            return 'No Prazo';
         }
     }
 }

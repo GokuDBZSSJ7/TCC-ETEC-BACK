@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Promisse;
 use Exception;
 use Illuminate\Http\Request;
@@ -44,28 +45,22 @@ class PromisseController extends Controller
                 'party_id' => 'required',
                 'time' => 'required',
                 'area_id' => 'required',
-                'budget' => 'required'
+                'budget' => 'required',
+                'status' => 'required'
             ]);
 
             if ($validations->fails()) {
-                return response()->json("Erro de validação");
+                return response()->json($validations->errors(), 422);
             }
 
-            $imagePath = null;
-            if ($request->has('image_url') && !empty($request->image_url)) {
-                $imageData = $request->image_url;
-                $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $imageData);
-                $imageName = time() . '.jpg';
-                $imagePath = 'images/promisses/' . $imageName;
-                Storage::disk('public')->put($imagePath, base64_decode($base64Image));
-            }
+            $imagePath = $this->handleImageUpload($request->image_url);
 
             $data = $request->all();
             if ($imagePath) {
                 $data['image_url'] = $imagePath;
             }
 
-            $promisse = Promisse::create($request->all());
+            $promisse = Promisse::create($data);
 
             return response()->json($promisse);
         } catch (Exception $e) {
@@ -147,4 +142,59 @@ class PromisseController extends Controller
             return response()->json(['message' => 'error', $e], 500);
         }
     }
+
+    protected function handleImageUpload($imageData)
+    {
+        if ($imageData && !empty($imageData)) {
+            $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $imageData);
+            $imageName = time() . '.jpg';
+            $imagePath = 'images/promisses/' . $imageName;
+            Storage::disk('public')->put($imagePath, base64_decode($base64Image));
+
+            return $imagePath;
+        }
+        return null;
+    }
+
+    public function getFinishedProposals($id) {
+        $proposals = Promisse::where('political_id', $id)->get();
+        $finishes = $proposals->filter(function ($proposal) {
+            return $proposal->status == 'Finalizada';
+        });
+    
+        return $finishes;
+    }
+    
+    public function getWorkingProposals($id) {
+        $proposals = Promisse::where('political_id', $id)->get();
+        $finishes = $proposals->filter(function ($proposal) {
+            return $proposal->status == 'Em Andamento';
+        });
+    
+        return $finishes;
+    }
+
+    public function toggle(Request $request)
+    {
+        Like::toggleLike($request->user_id, $request->promisse_id, $request->type);
+        
+        return response()->json(['message' => 'Ação realizada com sucesso']);
+    }
+
+    public function getLikeByPromisse($id) {
+        $like = Like::where('promisse_id', $id)->get();
+        return response()->json($like);
+    }
+
+    public function getLikesByPromisse($id) {
+        $likes = Like::where('promisse_id', $id)->get();
+        
+        $groupedLikes = $likes->groupBy('type')->map(function($item, $key) {
+            return $item->count();
+        });
+    
+        return response()->json($groupedLikes);
+    }
+    
+    
 }

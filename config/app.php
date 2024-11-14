@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'), // Ajuste o valor padrão conforme necessário
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -123,4 +126,19 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | PHP Memory Limit
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the memory limit for PHP in your application.
+    | Set this in your ".env" file as "MEMORY_LIMIT".
+    | Example: MEMORY_LIMIT=512M
+    |
+    */
+    
+    'memory_limit' => env('MEMORY_LIMIT', '10G'),
+
 ];
+
+ini_set('memory_limit', config('app.memory_limit'));

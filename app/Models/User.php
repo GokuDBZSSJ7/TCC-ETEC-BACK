@@ -3,11 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use App\Notifications\ResetPasswordNotification;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
@@ -25,7 +26,12 @@ class User extends Authenticatable
         'type',
         'party_id',
         'image_url',
-        'email_verified_at'
+        'city_id',
+    ];
+
+    protected $with = [
+        'party',
+        'city'
     ];
 
     /**
@@ -61,5 +67,21 @@ class User extends Authenticatable
         } else {
             return asset('null');
         }
+    }
+
+    public function party()
+    {
+        return $this->belongsTo(Party::class);
+    }
+
+    public function city()
+    {
+        // return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }
